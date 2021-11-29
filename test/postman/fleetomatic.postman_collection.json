@@ -1,0 +1,658 @@
+{
+	"info": {
+		"_postman_id": "b2dffd60-8549-4b4f-9992-dc1ef8322490",
+		"name": "fleetomatic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Debe crear un vehículo bien",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"marca\": { type: \"string\"},",
+							"            \"modelo\": { type: \"number\"},",
+							"            \"color\": { type: \"string\"},",
+							"            \"estado\": { type: \"string\"},",
+							"            \"asignado\": { type: \"boolean\"},",
+							"            \"fechaingreso\": { type: \"string\"},",
+							"            \"id\": { type: \"number\"}",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"marca\",\"modelo\",\"color\",\"estado\",\"asignado\",\"fechaingreso\",\"id\"]",
+							"    };",
+							"    pm.environment.set(\"vehiculoid\", pm.response.json().id); ",
+							"    pm.environment.set(\"vehiculoSchema\", schema);        ",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"marca\": \"FIAT\",\n  \"modelo\": 2015,\n  \"color\": \"AMARILLO\",\n  \"estado\": \"ACTIVO\",\n  \"asignado\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "No debe crear un vehículo mal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.badRequest; ",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Field validation errror\", function () {",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.message[0]).to.eql(\"marca must be a string\")",
+							"    pm.expect(resp.message[1]).to.eql(\"modelo must be a number conforming to the specified constraints\")",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"marca\": 1998,\n  \"modelo\": \"BMW\",\n  \"color\": \"AMARILLO\",\n  \"estado\": \"ACTIVO\",\n  \"asignado\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debe crear una novedad sobre un vehículo bien",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"asunto\": { type: \"string\"},",
+							"            \"descripcion\": { type: \"string\"},",
+							"            \"tipo\": { type: \"string\"},",
+							"            \"fecha\": { type: \"string\"},",
+							"            \"id\": { type: \"number\"},",
+							"            \"vehiculoid\": { type: \"number\"}",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"asunto\",\"descripcion\",\"tipo\",\"fecha\",\"id\"]",
+							"    };",
+							"    pm.environment.set(\"novedadSchema\", schema);          ",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asunto\": \"Ruido\",\n  \"descripcion\": \"Probando la api\",\n  \"tipo\": \"MANTENIMIENTO\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}/novedades",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}",
+						"novedades"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "No debe crear una novedad sobre un vehículo mal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.badRequest; ",
+							"     pm.response.to.be.withBody;",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Field validation errror\", function () {",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.message[0]).to.eql(\"asunto must be a string\");",
+							"    pm.expect(resp.message[1]).to.eql(\"descripcion must be a string\");",
+							"    pm.expect(resp.message[2]).to.eql(\"tipo must be a string\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asunto\": 123,\n  \"descripcion\": 456,\n  \"tipo\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}/novedades",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}",
+						"novedades"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Encuentra un vehículo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const novedadSchema = pm.variables.get(\"novedadSchema\");    ",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"marca\": { type: \"string\"},",
+							"            \"modelo\": { type: \"number\"},",
+							"            \"color\": { type: \"string\"},",
+							"            \"estado\": { type: \"string\"},",
+							"            \"asignado\": { type: \"boolean\"},",
+							"            \"fechaingreso\": { type: \"string\"},",
+							"            \"id\": { type: \"number\"},",
+							"            \"novedades\": {",
+							"                \"type\": \"array\",",
+							"                \"items\": novedadSchema",
+							"",
+							"            }",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"marca\",\"modelo\",\"color\",\"estado\",\"asignado\",\"fechaingreso\",\"id\",\"novedades\"]",
+							"    };",
+							"    pm.environment.set(\"vehiculoExtendidoSchema\", schema);     ",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Muestra una lista de vehículos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {   ",
+							"    const vehiculoExtendidoSchema = pm.variables.get(\"vehiculoExtendidoSchema\");    ",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"items\": {",
+							"                type: \"array\",",
+							"                \"items\": vehiculoExtendidoSchema",
+							"            },",
+							"            \"meta\": {",
+							"                type: \"object\"",
+							"            }",
+							"",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"items\",\"meta\"]",
+							"    };",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualiza todos los campos de un vehículo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const vehiculoSchema = pm.variables.get(\"vehiculoSchema\");    ",
+							"",
+							"    pm.response.to.have.jsonSchema(vehiculoSchema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"marca\": \"BMW\",\n  \"modelo\": 2010,\n  \"color\": \"VERDE\",\n  \"estado\": \"INACTIVO\",\n  \"asignado\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualiza solo unos campos de un vehículo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const vehiculoSchema = pm.variables.get(\"vehiculoSchema\");     ",
+							"",
+							"    pm.response.to.have.jsonSchema(vehiculoSchema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"marca\": \"HONDA\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borra un vehículo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"affected\": { type: \"number\"},",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"affected\"]",
+							"    };",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "No debe crear una novedad si el vehiculo no existe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"message\": { type: \"string\"},",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"message\"]",
+							"    };",
+							"",
+							"    pm.expect(pm.response.code).to.be.eql(400);",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asunto\": \"Ruido\",\n  \"descripcion\": \"Probando la api\",\n  \"tipo\": \"MANTENIMIENTO\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}/novedades",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}",
+						"novedades"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "No puede actualizar un vehículo si no existe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Payload must be valid and have a body\", function () { ",
+							"     pm.response.to.be.nested; ",
+							"     pm.response.to.be.withBody; ",
+							"     pm.response.to.be.json; ",
+							"});",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"",
+							"pm.test('Response schema should be valid', function() {",
+							"    const schema = {",
+							"        \"type\": \"object\",",
+							"        \"properties\": {",
+							"            \"message\": { type: \"string\"},",
+							"        },",
+							"        \"aditionalProperties\": false, ",
+							"        \"required\": [\"message\"]",
+							"    };",
+							"",
+							"    pm.expect(pm.response.code).to.be.eql(400);",
+							"    pm.response.to.have.jsonSchema(schema);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"asignado\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}{{rootpath}}vehiculos/{{vehiculoid}}",
+					"host": [
+						"{{host}}{{rootpath}}vehiculos"
+					],
+					"path": [
+						"{{vehiculoid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

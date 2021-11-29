@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  fleet:
+    container_name: nestjs_api_dev
+    image: fleetomatic:0.0.1
+    build:
+      context: .
+      target: development
+    command: npm run start:debug
+    #command: npm run test:watch
+    ports:
+      - 3000:3000
+      - 9229:9229
+    networks:
+      - nestjs-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    networks:
+      - nestjs-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - nestjs-network
+
+networks:
+  nestjs-network:
+volumes:
+  pgdata:
