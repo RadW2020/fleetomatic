@@ -16,10 +16,7 @@ export class NovedadesController {
     type: Novedad,
   })
   @Post('novedades')
-  async createNovedad(
-    @Param('vehiculoId', ParseIntPipe) vehiculoId: number,
-    @Body() newNovedad: NovedadDto,
-  ): Promise<Novedad> {
+  async createNovedad(@Param('vehiculoId', ParseIntPipe) vehiculoId: number, @Body() newNovedad: NovedadDto): Promise<Novedad> {
     try {
       const res = await this.novedadesService.createNovedad(vehiculoId, newNovedad);
       const customRes = Object.assign(res);

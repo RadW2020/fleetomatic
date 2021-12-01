@@ -4,12 +4,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { Vehiculo } from './vehiculo.entity';
 import { VehiculoDto } from './vehiculo.dto';
 import { IFilter } from '../types';
-import {
-  IPaginationMeta,
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationMeta, IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { updateVehiculoDto } from './update-vehiculo.dto';
 import { isDef } from '../tools';
 
@@ -21,13 +16,8 @@ export class VehiculosService {
     @InjectRepository(Vehiculo)
     private vehiculosRepository: Repository<Vehiculo>,
   ) {}
-  async findAll(
-    filter: IFilter,
-    options: IPaginationOptions,
-  ): Promise<Pagination<Vehiculo>> {
-    const qb = this.vehiculosRepository
-      .createQueryBuilder('v')
-      .leftJoinAndSelect('v.novedades', 'n');
+  async findAll(filter: IFilter, options: IPaginationOptions): Promise<Pagination<Vehiculo>> {
+    const qb = this.vehiculosRepository.createQueryBuilder('v').leftJoinAndSelect('v.novedades', 'n');
     isDef(filter.asignado) ? qb.andWhere('v.asignado = :a', { a: filter.asignado }) : null;
     isDef(filter.color) ? qb.andWhere('v.color = :b', { b: filter.color }) : null;
     isDef(filter.estado) ? qb.andWhere('v.estado = :c', { c: filter.estado }) : null;
@@ -63,10 +53,7 @@ export class VehiculosService {
     return this.vehiculosRepository.delete(vehiculoId);
   }
 
-  async updateVehiculo(
-    vehiculoId: number,
-    actualizaVehiculo: updateVehiculoDto,
-  ): Promise<Vehiculo> {
+  async updateVehiculo(vehiculoId: number, actualizaVehiculo: updateVehiculoDto): Promise<Vehiculo> {
     const toUpdate = await this.vehiculosRepository.findOne(vehiculoId);
     if (toUpdate === undefined || toUpdate === null) {
       throw new HttpException(
@@ -77,10 +64,7 @@ export class VehiculosService {
       );
     }
 
-    const updated: Vehiculo & VehiculoDto = Object.assign(
-      toUpdate,
-      actualizaVehiculo,
-    );
+    const updated: Vehiculo & VehiculoDto = Object.assign(toUpdate, actualizaVehiculo);
 
     return this.vehiculosRepository.save(updated);
   }

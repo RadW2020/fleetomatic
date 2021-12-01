@@ -40,9 +40,7 @@ fdescribe('novedadesController', () => {
       expect(novedadesController).toBeDefined();
     });
     it('debe crear una novedad', async () => {
-      expect(
-        await novedadesController.createNovedad(vehiculoIdDto, nDto),
-      ).toEqual({
+      expect(await novedadesController.createNovedad(vehiculoIdDto, nDto)).toEqual({
         id: expect.any(Number),
         fecha: fechaDto,
         vehiculo: { id: vehiculoIdDto },

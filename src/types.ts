@@ -2,6 +2,7 @@ export const DB_ERRORS = [
   '23502', // NOT NULL VIOLATION
   '23503', // FOREIGN KEY VIOLATION
 ];
+
 export interface IFilter {
   marca?: string;
   modelo?: number;
@@ -13,12 +14,10 @@ export interface IFilter {
   tipo?: TIPO;
 }
 
-
 export enum ESTADO {
   Activo = 'ACTIVO',
   Inactivo = 'INACTIVO',
 }
-
 
 export enum TIPO {
   MECANICO = 'MECANICO',

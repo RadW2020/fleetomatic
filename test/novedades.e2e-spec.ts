@@ -29,10 +29,7 @@ describe('NovedadesController (e2e)', () => {
     await app.init();
   });
   it('/ (POST) novedad', () => {
-    return request(app.getHttpServer())
-      .post('/vehiculos/1/novedades')
-      .send(nDto)
-      .expect(201);
+    return request(app.getHttpServer()).post('/vehiculos/1/novedades').send(nDto).expect(201);
   });
   afterAll(async () => {
     await app.close();

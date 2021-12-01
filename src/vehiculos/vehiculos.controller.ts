@@ -1,19 +1,4 @@
-import {
-  Body,
-  CacheInterceptor,
-  Controller,
-  DefaultValuePipe,
-  Delete,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Query,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, CacheInterceptor, Controller, DefaultValuePipe, Delete, Get, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseInterceptors } from '@nestjs/common';
 import { Vehiculo } from './vehiculo.entity';
 import { VehiculoDto } from './vehiculo.dto';
 import { VehiculosService } from './vehiculos.service';
@@ -38,16 +23,16 @@ export class VehiculosController {
     status: 200,
     description: 'Devuelve una lista de vehículos paginada',
   })
-  @ApiQuery({name: 'page', description: 'numero de página', example: 1, required: false})
-  @ApiQuery({name: 'limit', description: 'elementos por página', example: 10, required: false})
-  @ApiQuery({name: 'marca', description: 'marca del vehículo', example: 'FORD', required: false})
-  @ApiQuery({name: 'modelo', description: 'modelo del vehículo', example: 2019, required: false})
-  @ApiQuery({name: 'color', description: 'color del vehículo', example: 'BLANCO', required: false})
-  @ApiQuery({name: 'estado', description: 'estado del vehículo. ACTIVO o INACTIVO', example: 'ACTIVO', required: false})
-  @ApiQuery({name: 'asignado', description: 'Vehículo asignado', example: true, required: false})
-  @ApiQuery({name: 'asunto', description: 'asunto de la novedad', example: 'Tapicería', required: false})
-  @ApiQuery({name: 'descripcion', description: 'descripción de la novedad', example: 'cambio asientos', required: false})
-  @ApiQuery({name: 'tipo', description: 'tipo de la novedad: MECANICO, MULTA, MANTENIMIENTO, ACCIDENTE', example: 'MANTENIMIENTO', required: false})
+  @ApiQuery({ name: 'page', description: 'numero de página', example: 1, required: false })
+  @ApiQuery({ name: 'limit', description: 'elementos por página', example: 10, required: false })
+  @ApiQuery({ name: 'marca', description: 'marca del vehículo', example: 'FORD', required: false })
+  @ApiQuery({ name: 'modelo', description: 'modelo del vehículo', example: 2019, required: false })
+  @ApiQuery({ name: 'color', description: 'color del vehículo', example: 'BLANCO', required: false })
+  @ApiQuery({ name: 'estado', description: 'estado del vehículo. ACTIVO o INACTIVO', example: 'ACTIVO', required: false })
+  @ApiQuery({ name: 'asignado', description: 'Vehículo asignado', example: true, required: false })
+  @ApiQuery({ name: 'asunto', description: 'asunto de la novedad', example: 'Tapicería', required: false })
+  @ApiQuery({ name: 'descripcion', description: 'descripción de la novedad', example: 'cambio asientos', required: false })
+  @ApiQuery({ name: 'tipo', description: 'tipo de la novedad: MECANICO, MULTA, MANTENIMIENTO, ACCIDENTE', example: 'MANTENIMIENTO', required: false })
   @Get()
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
@@ -70,9 +55,13 @@ export class VehiculosController {
         paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
       });
       return res;
-
     } catch (error) {
-      console.log(error);
+      throw new HttpException(
+        {
+          message: error.message,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -91,9 +80,7 @@ export class VehiculosController {
     description: 'Vehiculo no encontrado',
   })
   @Get(':vehiculoId')
-  async findVehiculo(
-    @Param('vehiculoId', ParseIntPipe) vehiculoId: number,
-  ): Promise<Vehiculo> {
+  async findVehiculo(@Param('vehiculoId', ParseIntPipe) vehiculoId: number): Promise<Vehiculo> {
     const res = await this.vehiculosService.findVehiculo(vehiculoId);
     if (res === undefined || res === null) {
       throw new HttpException(
@@ -134,9 +121,7 @@ export class VehiculosController {
     description: 'Vehiculo no encontrado',
   })
   @Delete(':vehiculoId')
-  async deleteVehiculo(
-    @Param('vehiculoId', ParseIntPipe) vehiculoId: number,
-  ): Promise<DeleteResult> {
+  async deleteVehiculo(@Param('vehiculoId', ParseIntPipe) vehiculoId: number): Promise<DeleteResult> {
     const res = await this.vehiculosService.deleteVehiculo(vehiculoId);
     delete res.raw;
     if (res.affected === 0) {
@@ -161,15 +146,9 @@ export class VehiculosController {
     type: Vehiculo,
   })
   @Put(':vehiculoId')
-  async updateVehiculo(
-    @Param('vehiculoId', ParseIntPipe) vehiculoId: number,
-    @Body() actualizaVehiculo: updateVehiculoDto,
-  ): Promise<Vehiculo> {
+  async updateVehiculo(@Param('vehiculoId', ParseIntPipe) vehiculoId: number, @Body() actualizaVehiculo: updateVehiculoDto): Promise<Vehiculo> {
     try {
-      return await this.vehiculosService.updateVehiculo(
-        vehiculoId,
-        actualizaVehiculo,
-      );
+      return await this.vehiculosService.updateVehiculo(vehiculoId, actualizaVehiculo);
     } catch (error) {
       throw new HttpException(
         {
